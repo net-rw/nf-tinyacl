@@ -39,8 +39,6 @@ int ntl_entry_free_acl_entry(struct acl_entry *entry);
 
 void ntl_entry_hash_add(struct acl_entry *entry);
 void ntl_entry_hash_del(struct acl_entry *entry);
-
-int ntl_entry_init(struct dentry *dentry);
-void ntl_entry_exit(void);
+void ntl_entry_hash_iter(int (*callback)(void *));
 
 #endif
