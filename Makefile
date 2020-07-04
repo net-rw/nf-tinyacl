@@ -2,8 +2,8 @@ obj-m += ntl.o
 
 ntl-objs := \
 	ntl-init.o \
-	ntl-entry.o \
-	ntl-br-entry.o \
-	ntl-nf-bridge.o \
-	ntl-util.o \
+	common/ntl-entry.o \
+	common/ntl-util.o \
+	bridge/ntl-br-entry.o \
+	bridge/ntl-nf-bridge.o \
 
