@@ -10,8 +10,7 @@
 #include <linux/debugfs.h>
 
 #include "ntl-priv.h"
-#include "ntl-br-entry.h"
-#include "ntl-nf-bridge.h"
+#include "ntl-bridge-init.h"
 
 static struct dentry *ntl_dentry;
 
@@ -19,21 +18,17 @@ static int __init ntl_init(void)
 {
 	int ret = -1;
 
-	ntl_debug("NTL Module Init");
+	ntl_debug("NTL Core Module Init");
 
 	ntl_dentry = debugfs_create_dir("ntl", NULL);
 	if (!ntl_dentry) {
-		ntl_debug("Failed to create ntl directory in debugfs");
+		ntl_debug("Failed to create top level ntl directory in debugfs");
 		goto out;
 	}
 
-	ret = ntl_br_entry_init(ntl_dentry);
+	ret = ntl_bridge_init(ntl_dentry);
 	if (0 != ret)
-		goto err_br_entry;
-
-	ret = ntl_nf_bridge_init(ntl_dentry);
-	if (0 != ret)
-		goto err_nf_bridge;
+		goto err_bridge_init;
 
 	ret = 0;
 
@@ -41,27 +36,23 @@ out:
 	return ret;
 
 	/* errors */
-err_nf_bridge:
-	ntl_br_entry_exit();
-err_br_entry:
+err_bridge_init:
 	debugfs_remove_recursive(ntl_dentry);
 	goto out;
 }
 
 static void __exit ntl_exit(void)
 {
-	ntl_debug("NTL Module Exit");
+	ntl_debug("NTL Core Module Exit");
 
 	if (ntl_dentry) {
 		ntl_debug("Remove ntl debugfs");
 		debugfs_remove_recursive(ntl_dentry);
 	}
 
-	/* Must be called in order */
-	ntl_nf_bridge_exit();
-	ntl_br_entry_exit();
+	ntl_bridge_exit();
 
-	ntl_debug("NTL Module Exit Complete");
+	ntl_debug("NTL Core Module Exit Complete");
 }
 
 module_init(ntl_init)
