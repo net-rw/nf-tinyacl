@@ -1,5 +1,5 @@
 # NF-TinyACL
-NTL, which stands for NF-TinyACL is a netfilter based ACL kernel module for studying. With this kernel module, administrator can control incoming packets which their eth source address are the same as specific mac address in **Deny List** at bridge pre routing time.
+NTL, which stands for NF-TinyACL is a netfilter based ACL kernel module for studying. With this module, administrators can control incoming packets which their eth source address is matched to an entry in **Deny List** at bridge pre routing time. Packets income from device driver to bridge layer and walk through a bunch of hook points. Ever since the module is registered on the system, at the point of a packet through nf-tinyacl consider it should be dropped or passed to next stage.
 
 *The purpose of this module is studying for kernel network subsystem. No warranty on any risky situation and you have to verify all together before put in release. I have no responsibility for that case at all.*
 
