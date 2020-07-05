@@ -145,7 +145,7 @@ show_cb(void *ptr)
 	entry = (struct acl_entry*)ptr;
 
 	spin_lock(&entry->lock);
-	ntl_debug("key [%llu] : mac [%s]", entry->key, mac2str(entry->macaddr));
+	ntl_info("key [%llu] : mac [%s]", entry->key, mac2str(entry->macaddr));
 	spin_unlock(&entry->lock);
 
 	return 0;
