@@ -220,16 +220,12 @@ ntl_br_entry_init(void *parent_dentry)
 	}
 
 	if (!ntl_proc_creat(DENTRY_NAME,
-#if defined(CONFIG_PROC_FS)
-				0,
-#elif defined(CONFIG_DEBUG_FS)
+#if defined(CONFIG_DEBUG_FS)
 				S_IRUGO | S_IWUSR,
 #else
+				0,
 #endif
-				parent_dentry,
-#if !defined(CONFIG_PROC_FS) && defined(CONFIG_DEBUG_FS)
-				NULL,
-#endif
+				parent_dentry, NULL,
 				&br_entry_seq_fops))
 	{
 		ntl_debug("Failed to create ntl entry deny_list file in fs");
