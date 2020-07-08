@@ -7,12 +7,12 @@
 
 #include <linux/version.h>
 #include <linux/module.h>
-#include <linux/debugfs.h>
 
 #include "ntl-priv.h"
+#include "ntl-procfs.h"
 #include "ntl-bridge-init.h"
 
-static struct dentry *ntl_dentry;
+static struct ntl_fs_dentry *ntl_dentry;
 
 static int __init ntl_init(void)
 {
@@ -20,9 +20,9 @@ static int __init ntl_init(void)
 
 	ntl_debug("NTL Core Module Init");
 
-	ntl_dentry = debugfs_create_dir("ntl", NULL);
+	ntl_dentry = ntl_proc_mkdir("ntl", NULL);
 	if (!ntl_dentry) {
-		ntl_debug("Failed to create top level ntl directory in debugfs");
+		ntl_debug("Failed to create top level ntl directory in fs");
 		goto out;
 	}
 
@@ -37,7 +37,7 @@ out:
 
 	/* errors */
 err_bridge_init:
-	debugfs_remove_recursive(ntl_dentry);
+	ntl_proc_remove(ntl_dentry);
 	goto out;
 }
 
@@ -47,7 +47,7 @@ static void __exit ntl_exit(void)
 
 	if (ntl_dentry) {
 		ntl_debug("Remove ntl debugfs");
-		debugfs_remove_recursive(ntl_dentry);
+		ntl_proc_remove(ntl_dentry);
 	}
 
 	ntl_bridge_exit();

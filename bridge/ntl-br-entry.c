@@ -8,9 +8,11 @@
 #include <linux/string.h>
 #include <linux/if_ether.h>
 #include <linux/hashtable.h>
+#include <linux/seq_file.h>
 
 #include "ntl-priv.h"
 #include "ntl-util.h"
+#include "ntl-procfs.h"
 #include "ntl-br-entry.h"
 
 enum {
@@ -151,11 +153,28 @@ show_cb(void *ptr)
 	return 0;
 }
 
-static ssize_t
-ntl_entry_deny_list_show(struct file *file,
-		char __user *user_buf,
-		size_t sz,
-		loff_t *ppos)
+static void *
+br_entry_seq_start(struct seq_file *f, loff_t *pos)
+{
+	/* TODO */
+	return NULL;
+}
+
+static void *
+br_entry_seq_next(struct seq_file *f, void *v, loff_t *pos)
+{
+	/* TODO */
+	return NULL;
+}
+
+static void
+br_entry_seq_stop(struct seq_file *f, void *v)
+{
+	/* Nothing to do */
+}
+
+static int
+br_entry_seq_show(struct seq_file *f, void *v)
 {
 	rcu_read_lock();
 	ntl_entry_hash_iter(show_cb);
@@ -164,28 +183,57 @@ ntl_entry_deny_list_show(struct file *file,
 	return 0;
 }
 
-static struct file_operations ntl_entry_deny_list_fops = {
-	.write = ntl_entry_deny_list_add_del,
-	.read = ntl_entry_deny_list_show,
+static const struct seq_operations br_entry_seq_ops = {
+	.start = br_entry_seq_start,
+	.next = br_entry_seq_next,
+	.stop = br_entry_seq_stop,
+	.show = br_entry_seq_show,
 };
 
+static int br_entry_seq_open(struct inode *inode, struct file *file)
+{
+	return seq_open(file, &br_entry_seq_ops);
+}
+
+static struct file_operations br_entry_seq_fops = {
+	.owner = THIS_MODULE,
+	.open = br_entry_seq_open,
+	.write = ntl_entry_deny_list_add_del,
+	.read = seq_read,
+	.llseek = seq_lseek,
+	.release = seq_release,
+};
+
+#define DENTRY_NAME "deny_list"
+
 int
-ntl_br_entry_init(struct dentry *dentry)
+ntl_br_entry_init(void *parent_dentry)
 {
 	int ret = 0;
 
 	ntl_debug("NTL Entry Init");
 
-	if (!dentry) {
+	if (!parent_dentry) {
 		ntl_debug("Parameter is NULL");
 		ret = -EINVAL;
 		goto out;
 	}
 
-	if (!debugfs_create_file("deny_list", S_IRUGO | S_IWUSR, dentry,
-				NULL, &ntl_entry_deny_list_fops)) {
-		ntl_debug("Failed to create ntl entry deny_list file in debugfs");
-		ret = -1;
+	if (!ntl_proc_creat(DENTRY_NAME,
+#if defined(CONFIG_PROC_FS)
+				0,
+#elif defined(CONFIG_DEBUG_FS)
+				S_IRUGO | S_IWUSR,
+#else
+#endif
+				parent_dentry,
+#if !defined(CONFIG_PROC_FS) && defined(CONFIG_DEBUG_FS)
+				NULL,
+#endif
+				&br_entry_seq_fops))
+	{
+		ntl_debug("Failed to create ntl entry deny_list file in fs");
+		ret = -ENOMEM;
 		goto out;
 	}
 

@@ -12,7 +12,6 @@
 #include <linux/spinlock.h>
 #include <linux/if_ether.h>
 #include <linux/netdevice.h>
-#include <linux/debugfs.h>
 
 #define NTL_ENTRY_UNFLAG   (0)
 #define NTL_ENTRY_ALLOW_FG (1 << 0)

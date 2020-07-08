@@ -53,7 +53,7 @@ static struct nf_hook_ops ntl_nf_br_hooks[] = {
 };
 
 int
-ntl_nf_bridge_init(struct dentry *dentry)
+ntl_nf_bridge_init(void *parent_dentry)
 {
 	int ret = -1;
 

@@ -8,9 +8,7 @@
 #ifndef __NTL_BRIDGE_INIT_H__
 #define __NTL_BRIDGE_INIT_H__
 
-#include <linux/debugfs.h>
-
-int ntl_bridge_init(struct dentry *dentry);
+int ntl_bridge_init(void *parent_dentry);
 void ntl_bridge_exit(void);
 
 #endif

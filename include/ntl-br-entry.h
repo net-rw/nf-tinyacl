@@ -8,11 +8,9 @@
 #ifndef __NTL_BR_ENTRY_H__
 #define __NTL_BR_ENTRY_H__
 
-#include <linux/debugfs.h>
-
 #include "ntl-entry.h"
 
-int ntl_br_entry_init(struct dentry *dentry);
+int ntl_br_entry_init(void *parent_dentry);
 void ntl_br_entry_exit(void);
 
 #endif
